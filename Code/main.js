@@ -67,8 +67,8 @@ Array.from(numberButtons).forEach(numberButton => {
   });
 });
 
-Array.from(operatorButtons).forEach(numberButton => {
-  numberButton.addEventListener("click", (e) => {
+Array.from(operatorButtons).forEach(operatorButton => {
+  operatorButton.addEventListener("click", (e) => {
     const value = mainDisplay.textContent;
 
     if (resultValue) {
@@ -80,6 +80,7 @@ Array.from(operatorButtons).forEach(numberButton => {
       firstValue = parseFloat(value);
     } else {
       firstValue = calculate(firstValue, parseFloat(value), operatorValue);
+      mainDisplay.textContent = firstValue;
     }
 
     operatorValue = e.target.textContent;
