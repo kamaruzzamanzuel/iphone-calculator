@@ -10,6 +10,7 @@ let firstValue = "";
 let secondValue = "";
 let operatorValue = "";
 let resultValue = "";
+let isWaitingForSecondValue = false;
 let isClearMainDisplay = false;
 let isClearAll = false;
 
@@ -19,6 +20,7 @@ const clearAll = () => {
   operatorValue = "";
   resultValue = "";
   mainDisplay.textContent = "0";
+  isWaitingForSecondValue = false;
   isClearMainDisplay = false;
   isClearAll = false;
 };
@@ -29,6 +31,10 @@ Array.from(numberButtons).forEach(numberButton => {
   numberButton.addEventListener("click", (e) => {
     const value = e.target.textContent;
     let currentMainDisplayText = mainDisplay.textContent;
+
+    if (isWaitingForSecondValue) {
+      isWaitingForSecondValue = false;
+    }
 
     if (isClearAll) {
       clearAll();
@@ -61,9 +67,6 @@ Array.from(numberButtons).forEach(numberButton => {
     }
 
     mainDisplay.textContent += value;
-
-
-    // console.log({ t:});
   });
 });
 
@@ -71,25 +74,27 @@ Array.from(operatorButtons).forEach(operatorButton => {
   operatorButton.addEventListener("click", (e) => {
     const value = mainDisplay.textContent;
 
-    if (resultValue) {
-      firstValue = resultValue;
-      secondValue = "";
-      resultValue = "";
-      isClearAll = false;
-    } else if (firstValue === "") {
-      firstValue = parseFloat(value);
-    } else {
-      firstValue = calculate(firstValue, parseFloat(value), operatorValue);
-      mainDisplay.textContent = firstValue;
+    if (!isWaitingForSecondValue) {
+      if (resultValue) {
+        firstValue = resultValue;
+        secondValue = "";
+        resultValue = "";
+        isClearAll = false;
+      } else if (firstValue === "") {
+        firstValue = parseFloat(value);
+      } else {
+        firstValue = calculate(firstValue, parseFloat(value), operatorValue);
+        mainDisplay.textContent = firstValue;
+      }
     }
 
     operatorValue = e.target.textContent;
+    isWaitingForSecondValue = true;
     isClearMainDisplay = true;
   });
 });
 
 equalButton.addEventListener("click", (e) => {
-
   if (firstValue) {
     secondValue = parseFloat(mainDisplay.textContent);
 
@@ -130,12 +135,3 @@ const calculate = (firstNumber, secondNumber, operator) => {
   console.log({ firstNumber, secondNumber, operator, result });
   return result;
 };
-
-
-
-// if (!operatorValue) {
-//   firstValue += value;
-// } else {
-//   secondValue += value;
-//   mainDisplay.value = secondValue;
-// }
