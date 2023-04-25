@@ -11,6 +11,7 @@ let secondValue = "";
 let operatorValue = "";
 let resultValue = "";
 let isWaitingForSecondValue = false;
+let isEqualButtonAlreadyPressed = false;
 let isClearMainDisplay = false;
 let isClearAll = false;
 
@@ -32,9 +33,9 @@ Array.from(numberButtons).forEach(numberButton => {
     const value = e.target.textContent;
     let currentMainDisplayText = mainDisplay.textContent;
 
-    if (isWaitingForSecondValue) {
-      isWaitingForSecondValue = false;
-    }
+    isEqualButtonAlreadyPressed = false;
+    isWaitingForSecondValue = false;
+
 
     if (isClearAll) {
       clearAll();
@@ -90,21 +91,19 @@ Array.from(operatorButtons).forEach(operatorButton => {
 
     operatorValue = e.target.textContent;
     isWaitingForSecondValue = true;
+    isEqualButtonAlreadyPressed = false;
     isClearMainDisplay = true;
   });
 });
 
 equalButton.addEventListener("click", (e) => {
+  if (isEqualButtonAlreadyPressed || operatorValue === "") {
+    return;
+  }
+
   if (firstValue) {
     secondValue = parseFloat(mainDisplay.textContent);
-
-    if (operatorValue === "") {
-      secondValue = firstValue;
-    }
-
     resultValue = calculate(firstValue, secondValue, operatorValue);
-  } else {
-    resultValue = firstValue;
   }
 
   mainDisplay.textContent = resultValue;
@@ -113,6 +112,7 @@ equalButton.addEventListener("click", (e) => {
   // operatorValue = "";
   // resultValue = "";
   // mainDisplay.textContent = "0";
+  isEqualButtonAlreadyPressed = true;
   isClearAll = true;
 });
 
@@ -122,12 +122,15 @@ const calculate = (firstNumber, secondNumber, operator) => {
   if (operator === "+") {
     result = firstNumber + secondNumber;
   }
+
   if (operator === "-") {
     result = firstNumber - secondNumber;
   }
+
   if (operator === "*") {
     result = firstNumber * secondNumber;
   }
+
   if (operator === "/") {
     result = firstNumber / secondNumber;
   }
